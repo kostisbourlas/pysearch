@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+
+  database:
+    container_name: pysearch-database
+    environment:
+      - POSTGRES_DB=pysearch_db
+      - POSTGRES_USER=pysearch_db_owner
+      - POSTGRES_PASSWORD=pysearch_password
+    image: postgres:13.2
+    ports:
+      - "5433:5432"
+    volumes:
+      - pysearch-database:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: ./server
+    container_name: pysearch-server
+    depends_on:
+      - database
+    environment:
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=pysearch_db
+      - SQL_USER=pysearch_db_owner
+      - SQL_PASSWORD=pysearch_password
+      - SQL_HOST=pysearch-database
+      - SQL_PORT=5432
+    command: [ "bash", "start.sh" ]
+    ports:
+      - 8003:8000
+    volumes:
+      - ./server:/usr/src/app
+
+volumes:
+  pysearch-database:
