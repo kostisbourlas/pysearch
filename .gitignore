@@ -133,3 +133,4 @@ dmypy.json
 .vscode
 wines.json
 test_wines.json
+server/static
